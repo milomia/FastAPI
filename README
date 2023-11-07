@@ -5,3 +5,4 @@
 5.you can post a cake using the swagger ui
 6. you can read the cake with the get
 7. you can also delete the cake with the delete option
+8. pytest tests included you will have to install local requirements and make your own virtual env
