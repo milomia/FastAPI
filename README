@@ -1,11 +1,7 @@
-1.to build docker image - docker build -t fast .
-2.to run image - docker run fast:
+1.to build docker image - docker build -t fast_api .
+2.to run image - docker run -d --name container fast_api
 3.to test - goto to browser http://localhost:80/api
 4.goto startup to startup database (sqllite)
 5.you can post a cake using the swagger ui
 6. you can read the cake with the get
 7. you can also delete the cake with the delete option
-
- 
- 
-
