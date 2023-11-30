@@ -38,11 +38,17 @@ class DBItem(Base):
     yumFactor: Mapped[int] = mapped_column()
 
 
-
+# create the database
 engine = create_engine(DATABASE_URL)
+# create the tables
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-app = FastAPI()
+app = FastAPI(
+    title="Cake API",
+    description="A simple API that manages cakes",
+    version="0.1",
+    docs_url="/",
+)
                     
 # Dependency to get the database session
 def get_db():
@@ -52,13 +58,22 @@ def get_db():
     finally:
         database.close()
 
+
+@app.get("/cakes/")
+async def get_cakes(db: Session = Depends(get_db)):
+    db_cake = db.query(DBItem).filter(DBItem.id).all()
+    if db_cake is None:
+        raise HTTPException(status_code=404, detail=f"Get no cakes found ")
+    return Cake(**db_cake.__dict__)
+
+
 @app.get("/startup")
 async def startup():
     Base.metadata.create_all(bind=engine)
 
 
 @app.post("/cakes/")
-def create_item(item: CakeCreate, db: Session = Depends(get_db)) -> Cake:
+async def create_item(item: CakeCreate, db: Session = Depends(get_db)) -> Cake:
     db_cake = DBItem(**item.model_dump())
     db.add(db_cake)
     db.commit()
@@ -67,17 +82,14 @@ def create_item(item: CakeCreate, db: Session = Depends(get_db)) -> Cake:
 
 
 @app.get("/cakes/{cake_id}")
-def read_item(cake_id: int, db: Session = Depends(get_db)) -> Cake:
+async def read_item(cake_id: int, db: Session = Depends(get_db)) -> Cake:
     db_cake = db.query(DBItem).filter(DBItem.id == cake_id).first()
     if db_cake is None:
         raise HTTPException(status_code=404, detail=f"Get Cake not found {cake_id}")
     return Cake(**db_cake.__dict__)
 
-
-
-
 @app.delete("/cakes/{cake_id}")
-def delete_item(cake_id: int, db: Session = Depends(get_db)) -> Cake:
+async def delete_item(cake_id: int, db: Session = Depends(get_db)) -> Cake:
     db_cake = db.query(DBItem).filter(DBItem.id == cake_id).first()
     if db_cake is None:
         raise HTTPException(status_code=404, detail="Delete Cake not found")
