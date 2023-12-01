@@ -27,7 +27,7 @@ DATABASE_URL = ("sqlite:///cakes")
 class Base(DeclarativeBase):
     pass
 
-
+# model
 class DBItem(Base):
     __tablename__ ="cakes"
 
@@ -61,7 +61,7 @@ def get_db():
 
 @app.get("/cakes/")
 async def get_cakes(db: Session = Depends(get_db)):
-    db_cake = db.query(DBItem).filter(DBItem.id).all()
+    db_cake = db.query(DBItem).all()
     if db_cake is None:
         raise HTTPException(status_code=404, detail=f"Get no cakes found ")
     return Cake(**db_cake.__dict__)

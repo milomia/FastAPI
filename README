@@ -10,6 +10,6 @@
 7. you can also delete the cake with the delete option
 8. pytest tests included you will have to install local requirements and make your own virtual env
 
-9. to run outside docker: uvicorn main::app --reload
+9. to run outside docker: uvicorn main:app --reload
 10. to run tests outside docker: pytest tests
 
